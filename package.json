@@ -1,10 +1,10 @@
 {
-  "name": "spartan",
-  "version": "1.0.0",
+  "name": "spartan-api",
+  "version": "0.1.0",
   "description": "APIs to create and verify spartan auth certificates",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"TODO: Add tests here.\" && exit 0"
   },
   "keywords": [
     "spartan",
@@ -16,15 +16,14 @@
   "author": {
     "name": "Binu Ramakrishnan"
   },
+  "bugs": {
+    "url": "https://github.com/yahoo/spartan-node/issues"
+  },
   "license": "BSD-3-Clause",
   "dependencies": {
     "jsonwebtoken": "^5.4.0",
     "request": "^2.65.0"
   },
   "readme": "NodeJS Javascript APIs to:\n\n1. Fetch certificates from Attestation Server, sign\n   and pass it to the caller. The caller application \n   pass this cert token to the server using HTTP header:\n   x-spartan-auth-token: <cert token> \n2. APIs used by server side to validate the cert token\n   passed by the client in HTTP header\n\nTODO: Better documentation\n",
-  "readmeFilename": "README.md",
-  "_id": "spartan@1.0.0",
-  "_shasum": "abc87c2eee27063687bac1912db920575250e117",
-  "_resolved": "file:../../lib/javascript/spartan/spartan-1.0.0.tgz",
-  "_from": "../../lib/javascript/spartan/spartan-1.0.0.tgz"
+  "readmeFilename": "README.md"
 }
