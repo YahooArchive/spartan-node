@@ -1,6 +1,6 @@
 {
   "name": "spartan-api",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "APIs to create and verify spartan auth certificates",
   "main": "index.js",
   "scripts": {
