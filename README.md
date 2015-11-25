@@ -27,7 +27,7 @@ This module provides authentication and authorization APIs for client & server a
 
 This section provides a sample NodeJS client and server implementation to demostrate the usage. The client wanted to access a protected service (e.g. `/auth-test`). To access this endpoint, the client passes the cert token it received from `getToken()`. The service endpoint validates the cert token and grant access to the requested resource.
 
-The following examples are also available in spartan/demo directory
+The following examples are also available in [spartan server demo directory](https://github.com/yahoo/spartan/tree/master/demo)
 
 ---
 
@@ -120,19 +120,5 @@ module.exports = router;
 ## API Documentation
 
 The APIs are documented in the source file - [index.js][]
-
-## Local packaging:
-
-```
-% npm pack
-```
-
-The above cmd creates a package file.
- 
-Install a local package:
-
-```
-% npm install path/to/package/file -save
-```
 
 [index.js]: ./index.js
