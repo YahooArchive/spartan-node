@@ -2,6 +2,15 @@
 
 This module provides authentication and authorization APIs for client & server applications.
 
+[![npm version][npm-badge]][npm]
+[![dependency status][dep-badge]][dep-status]
+[![Build Status](https://travis-ci.org/yahoo/spartan-node.svg?branch=master)](https://travis-ci.org/yahoo/spartan-node)
+
+[npm]: https://www.npmjs.org/package/spartan-api
+[npm-badge]: https://img.shields.io/npm/v/spartan-api.svg?style=flat-square
+[dep-status]: https://david-dm.org/yahoo/spartan-node
+[dep-badge]: https://img.shields.io/david/yahoo/spartan-node.svg?style=flat-square
+
 ## How it works?
 
 ---
@@ -25,7 +34,7 @@ The following examples are also available in spartan/demo directory
 **Client**
 
 ```javascript
-var spartan = require('spartan');
+var spartan = require('spartan-api');
 var request = require('request');
 
 // App server you want to connect to. This is a protected endpoint
@@ -90,7 +99,7 @@ spartan.getToken('SuperRole', { app_privkey: fs.readFileSync('priv.key'),  // cl
 var fs = require('fs');
 var express = require('express');
 var router = express.Router();
-var spartan = require('spartan');
+var spartan = require('spartan-api');
 
 var sp_handlr = new spartan.RouteHandler({ as_pubkey: fs.readFileSync(config.asPubKey, 'utf8'),
                                            role: 'SuperRole' // role for authz

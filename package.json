@@ -1,7 +1,7 @@
 {
   "name": "spartan-api",
   "version": "0.2.0",
-  "description": "APIs to create and verify spartan auth certificates",
+  "description": "APIs to create and verify spartan auth tokens",
   "main": "index.js",
   "scripts": {
     "test": "echo \"TODO: Add tests here.\" && exit 0"
@@ -24,6 +24,6 @@
     "jsonwebtoken": "^5.4.0",
     "request": "^2.65.0"
   },
-  "readme": "NodeJS Javascript APIs to:\n\n1. Fetch certificates from Attestation Server, sign\n   and pass it to the caller. The caller application \n   pass this cert token to the server using HTTP header:\n   x-spartan-auth-token: <cert token> \n2. APIs used by server side to validate the cert token\n   passed by the client in HTTP header\n\nTODO: Better documentation\n",
+  "readme": "NodeJS Javascript APIs to:\n\n1. Fetch tokens from Attestation Server, sign\n   and pass it to the caller. The caller application \n   pass this token to the server using HTTP header:\n   x-spartan-auth-token: <token> \n2. APIs used by server side to validate the token\n   passed by the client in HTTP header\n",
   "readmeFilename": "README.md"
 }
