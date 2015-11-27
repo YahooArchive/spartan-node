@@ -5,11 +5,12 @@
 // 
 //   Author: Binu Ramakrishnan
 //   Created: 11/01/2015
-
+/* global require, module,  __dirname, console */
+/* jshint -W097 */
 "use strict";
-var request = require('request');
 var os = require('os');
 var fs = require('fs');
+var request = require('request');
 var jwt = require('jsonwebtoken');
 var crypto = require('crypto');
 var config = require('./config');
@@ -43,6 +44,15 @@ Spartan.tokenSign = function (options, data, privkey) {
 
   var token;
   try {
+    if ((!options.hasOwnProperty('iss')) ||
+        (!options.hasOwnProperty('sub'))) {
+
+      return {
+        success: false,
+        message: 'Missing subject (sub) and/or issuer (iss) in options'
+      };
+    }
+
     token = jwt.sign(data, privkey, {
       expiresIn: options.exp || 3600, // 60 minutes
       algorithm: options.alg || 'ES256',
@@ -74,6 +84,7 @@ Spartan.tokenSign = function (options, data, privkey) {
  * route chaining
  */
 Spartan.tokenVerify = function (token, pubkey) {
+
   var decoded;
   try {
     decoded = jwt.verify(token, pubkey);
@@ -81,7 +92,7 @@ Spartan.tokenVerify = function (token, pubkey) {
     console.error(err);
     return {
       success: false,
-      message: 'Failed to authenticate token.'
+      message: 'Failed to verify token.'
     };
   }
 
@@ -92,17 +103,19 @@ Spartan.tokenVerify = function (token, pubkey) {
 };
 
 /**
- * Get certificate tokens. Used by client application before it makes HTTP
- * requests to a service. The cert-token returned by this function is passed
- * along with the request in a separate HTTP header - x-spartan-auth-token
+ * Get ASTokens from assertion service. Application uses this API
+ * to fetch ASToken before it makes HTTP requests to a service. The token
+ * returned by this function is passed along with the request in a separate
+ * HTTP header - x-spartan-auth-token
  * (Asynchronous)
- * @param {string} role - The connecting service role
+ * @param {string} role - The connecting service role (the name of the role
+ * used to protect the service the appliction wants to access)
  * @param {JSON} options - Additional parameters in JSON:
  *   {
- *     app_privkey: fs.readFileSync('priv.key'),
- *     app_pubkey: fs.readFileSync('pub.key', 'utf8'),
- *     as_pubkey: fs.readFileSync('as-public-key.pem'),
- *     as_url: 'http://localhost:3000/v1/as/tokens',
+ *     app_privkey: fs.readFileSync('priv.key'),        // app's private key
+ *     app_pubkey: fs.readFileSync('pub.key', 'utf8'),  // app's public key
+ *     as_pubkey: fs.readFileSync('as-public-key.pem'), // AS public key
+ *     as_url: 'http://localhost:3000/v1/as/tokens',    // AS URL
  *     exp: '<expiry TTL>',         // optional def: 60
  *     alg: '<signing algorithm>',  // optional; def: ES256
  *     token_type: 'app-svc-req',   // {'app-svc-req','as-app-token'}
@@ -133,7 +146,7 @@ Spartan.getToken = function (role_id, options, callback) {
   }
 
   // Check if the file exist and load it
-  fs.readFile(cf, function read(err, data) {
+  fs.readFile(cf, function read(error, tokendata) {
 
     var as,
       token_type,
@@ -144,14 +157,14 @@ Spartan.getToken = function (role_id, options, callback) {
       ret1,
       params;
 
-    if (err) {
+    if (error) {
       //throw err;
       //console.log(err);
       // ignore and lets fetch it from AS
     } else {
 
       try {
-        as = JSON.parse(data);
+        as = JSON.parse(tokendata);
 
         // Invoke the next step here however you like
         for (i in as.tokens) {
@@ -214,8 +227,8 @@ Spartan.getToken = function (role_id, options, callback) {
         exp: options.exp || 60, // 1 minute
         alg: options.alg || 'ES256'
       }, data, options.app_privkey);
-    } catch (error) {
-      callback(error);
+    } catch (err) {
+      callback(err);
       return;
     }
 
@@ -265,9 +278,8 @@ Spartan.getToken = function (role_id, options, callback) {
         mode: parseInt('0600', 8)
       }, function (err) {
         if (err) {
-          console.log('token write error: ' + err);
+          console.error('token write error: ' + err);
         }
-        //console.log('It\'s saved!');
       });
 
       for (i in as.tokens) {
@@ -299,8 +311,8 @@ Spartan.getToken = function (role_id, options, callback) {
           }
         }
       }
-    } catch (error) {
-      callback(error);
+    } catch (err) {
+      callback(err);
       return;
     }
 

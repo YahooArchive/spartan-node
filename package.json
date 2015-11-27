@@ -4,7 +4,9 @@
   "description": "APIs to create and verify spartan auth tokens",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"TODO: Add tests here.\" && exit 0"
+    "hint": "grunt jshint",
+    "build": "npm install; grunt",
+    "test": "grunt test"
   },
   "keywords": [
     "spartan",
@@ -23,6 +25,12 @@
   "dependencies": {
     "jsonwebtoken": "^5.4.0",
     "request": "^2.65.0"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^0.11.3",
+    "grunt-contrib-nodeunit": "^0.4.1",
+    "nodeunit": "~0.9.1"
   },
   "readme": "NodeJS Javascript APIs to:\n\n1. Fetch tokens from Attestation Server, sign\n   and pass it to the caller. The caller application \n   pass this token to the server using HTTP header:\n   x-spartan-auth-token: <token> \n2. APIs used by server side to validate the token\n   passed by the client in HTTP header\n",
   "readmeFilename": "README.md"
