@@ -18,6 +18,10 @@
   "author": {
     "name": "Binu Ramakrishnan"
   },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:yahoo/spartan-node.git"
+  },
   "bugs": {
     "url": "https://github.com/yahoo/spartan-node/issues"
   },
