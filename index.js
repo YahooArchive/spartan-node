@@ -31,11 +31,11 @@ var sendErrorResponse = function (res, obj, code) {
 /**
  * Use to create a JSON Web Token (JWT) (Synchronous)
  * @param {JSON} options - {
- *      exp: '<expiry TTL>',  // optional def: 3600
- *      alg: '<signing algorithm>', // optional; def: ES256
- *      sub: '<subject>',
- *      iss: '<issuer>'
- * be either 'self' or Attestation service
+ *      sub: '<subject>',          // subject
+ *      iss: '<issuer>',           // token issuer
+ *                                 // be either 'self' or Attestation service
+ *      exp: '<expiry TTL>',       // optional def: 3600 sec
+ *      alg: '<signing algorithm>' // optional; def: ES256
  * @param {JSON} data - The actual data (in JSON) contained in the JWT
  * @param {string} privkey - App priv key
  * @returns {JSON} { success: true, token: jwt-token }
@@ -321,7 +321,75 @@ Spartan.getToken = function (role_id, options, callback) {
       role_id));
     return;
   }
+};
 
+/**
+ * NodeJS token fetcher class - used by application to fetch ASTokens from
+ * Attestation Service
+ * TODO fix the path: @see Example usage - check spartan/demo/server/routes/service-auth.js
+ * @param {JSON} options - Parameters in JSON:
+ *   {
+ *     app_privkey: fs.readFileSync('priv.key'),        // app's private key
+ *     app_pubkey: fs.readFileSync('pub.key', 'utf8'),  // app's public key
+ *     as_pubkey: fs.readFileSync('as-public-key.pem'), // AS public key
+ *     as_url: 'http://localhost:3000/v1/as/tokens',    // AS URL
+ *     exp: '<expiry TTL>',         // optional def: 60
+ *     alg: '<signing algorithm>',  // optional; def: ES256
+ *     cache_path: '</path/to/dir>' // to cache tokens. dir must be 0700 perm
+ *   };
+ */
+var TokenFetcher = function (options) {
+  this.options = options;
+
+  if (!options.exp) {
+    this.options.exp = 60;
+  }
+
+  if (!options.alg) {
+    this.options.alg = 'ES256';
+  }
+
+  if (!options.app_privkey) {
+    throw new Error('app_privkey option params is not defined ' + JSON.stringify(
+      options));
+  }
+
+  if (!options.app_pubkey) {
+    throw new Error('app_pubkey option params is not defined ' + JSON.stringify(
+      options));
+  }
+
+  if (!options.as_url) {
+    throw new Error('as_url option params is not defined ' + JSON.stringify(
+      options));
+  }
+
+  if (!options.cache_path) {
+    throw new Error('cache_path option params is not defined ' + JSON.stringify(
+      options));
+  }
+
+};
+
+/**
+ * Get ASToken from attestation service, sign it with app's private
+ * key and return the signed ASToken
+ * @param {string} role - Role name
+ * @param { callback(err, cert-token) } callback - Callback function
+ */
+TokenFetcher.prototype.getSignedToken = function (role, callback) {
+  this.options.token_type = 'app-svc-req';
+  return Spartan.getToken(role, this.options, callback);
+};
+
+/**
+ * Get ASToken from attestation server
+ * @param {string} role - Role name
+ * @param { callback(err, cert-token) } callback - Callback function
+ */
+TokenFetcher.prototype.getToken = function (role, callback) {
+  this.options.token_type = 'as-app-token';
+  return Spartan.getToken(role, this.options, callback);
 };
 
 /**
@@ -591,3 +659,12 @@ RouteHandler.prototype.asAuth = function (req, res, next) {
 };
 
 module.exports.RouteHandler = RouteHandler;
+module.exports.RouteHandler = function(options) {
+    return new RouteHandler(options);
+};
+
+module.exports.TokenFetcher = TokenFetcher;
+module.exports.createTokenFetcher = function(options) {
+    return new TokenFetcher(options);
+};
+
