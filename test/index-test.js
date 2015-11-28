@@ -71,3 +71,34 @@ exports.testTokenSignVerify2 = function(assert) {
 
   assert.done();
 };
+
+exports.testTokenAuth = function(assert) {
+
+  var opt = {
+              sub: 'test-subject',
+              iss: 'self',
+              exp: 60, // 1 minute
+              alg: 'ES256'
+            };
+  var data =  { role: 'SuperRole', type: 'as-app-token' };
+
+  var ret = spartan.tokenSign(opt, data, privkey);
+
+  //console.log(ret);
+  assert.equals(ret.success, true, 'tokenSign success: ' + ret.data);
+
+  var opt2 = {
+               as_pubkey: pubkey,       // attestation server's pub key
+               role: 'SuperRole',          // Role for authorization check
+               token_type: 'as-app-token' // optional, def: app-svc_token
+             };
+
+  var ret2 = spartan.tokenAuth(ret.token, opt2);
+
+  //console.log(ret2);
+  assert.equals(ret2.success, true, 'tokenAuth success: ');
+  //assert.ok(ret2.data.sub, opt.sub);
+  //assert.ok(ret2.data.iss, opt.iss);
+  //assert.ok(ret2.data.exp, opt.exp);
+  assert.done();
+};

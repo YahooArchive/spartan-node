@@ -431,9 +431,7 @@ Spartan.tokenAuth = function (token, options) {
         return_code: '403'
       };
 
-
     } else if (decoded.payload.type === 'as-app-token') {
-
       resp2 = Spartan.tokenVerify(token, options.as_pubkey);
       if (resp2.success) {
         data.authz_token = resp2.data;

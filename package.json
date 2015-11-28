@@ -35,6 +35,7 @@
     "grunt-cli": "^0.1.13",
     "grunt-contrib-jshint": "^0.11.3",
     "grunt-contrib-nodeunit": "^0.4.1",
+    "mocha": "^2.3.4",
     "nodeunit": "~0.9.1"
   },
   "readme": "NodeJS Javascript APIs to:\n\n1. Fetch tokens from Attestation Server, sign\n   and pass it to the caller. The caller application \n   pass this token to the server using HTTP header:\n   x-spartan-auth-token: <token> \n2. APIs used by server side to validate the token\n   passed by the client in HTTP header\n",
