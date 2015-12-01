@@ -503,7 +503,7 @@ Spartan.tokenAuth = function (token, options) {
       resp2 = Spartan.tokenVerify(token, options.as_pubkey);
       if (resp2.success) {
         data.authz_token = resp2.data;
-        console.error('Role: ' + resp2.data.role);
+        //console.error('Role: ' + resp2.data.role);
         if ((options.role) && (options.role === resp2.data.role)) {
 
           if ((options.remote_ip) &&
