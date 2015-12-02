@@ -587,9 +587,13 @@ var RouteHandler = function (options) {
  */
 RouteHandler.prototype.svcAuth = function (req, res, next) {
   // check header or url parameters or post parameters for token
-  var token = req.body.spartantoken ||
-    req.query.spartantoken ||
-    req.headers['x-spartan-auth-token'],
+  if (!req || !(req.headers) || (!req.headers['x-spartan-auth-token'])) {
+    return sendErrorResponse(res, {
+      'msg': 'Missing x-spartan-auth-token HTTP header'
+    }, 400);
+  }
+
+  var token = req.headers['x-spartan-auth-token'],
     ret;
 
   this.options.remote_ip = req.connection.remoteAddress;
@@ -620,9 +624,13 @@ RouteHandler.prototype.svcAuth = function (req, res, next) {
  */
 RouteHandler.prototype.asAuth = function (req, res, next) {
   // check header or url parameters or post parameters for token
-  var token = req.body.spartantoken ||
-    req.query.spartantoken ||
-    req.headers['x-spartan-auth-token'],
+  if (!req || !(req.headers) || (!req.headers['x-spartan-auth-token'])) {
+    return sendErrorResponse(res, {
+      'msg': 'Missing x-spartan-auth-token HTTP header'
+    }, 400);
+  }
+
+  var token = req.headers['x-spartan-auth-token'],
     decoded,
     verify;
 
@@ -632,6 +640,12 @@ RouteHandler.prototype.asAuth = function (req, res, next) {
     });
     //console.error(decoded.header);
     //console.error(decoded.payload)
+
+    if ((!decoded) || !(decoded.payload) || !(decoded.payload.type)) {
+       return sendErrorResponse(res, {
+        'msg': 'Invalid token'
+      }, 400);
+    }
 
     if (decoded.payload.type !== 'as-app-req') {
       return sendErrorResponse(res, {

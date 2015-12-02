@@ -9,7 +9,6 @@ var assert = require('assert');
 var express = require('express');
 var request = require('supertest');
 
-
 describe("TokenSign and TokenVerify API Unit tests", function() {
     it("testTokenSignVerify", function(done) {
 
@@ -95,7 +94,7 @@ describe("TokenSign and TokenVerify API Unit tests", function() {
 describe('asAuth API (express route handler) test', function() {
   var app;
 
-  beforeEach(function() {
+  before(function() {
     app = express();
     app.use(require('body-parser').urlencoded({extended: true}));
     app.use(require('body-parser').json());
@@ -117,7 +116,7 @@ describe('asAuth API (express route handler) test', function() {
     });
   });
 
-  afterEach(function() { });
+  after(function() { });
 
   it('as-app-req type test (should return HTTP 200 OK)', function(done) {
 
@@ -153,7 +152,7 @@ describe('asAuth API (express route handler) test', function() {
 describe('svcAuth API (express route handler) test', function() {
   var app;
 
-  beforeEach(function() {
+  before(function() {
     app = express();
     app.use(require('body-parser').urlencoded({extended: true}));
     app.use(require('body-parser').json());
@@ -177,7 +176,7 @@ describe('svcAuth API (express route handler) test', function() {
     });
   });
 
-  afterEach(function() { });
+  after(function() { });
 
   it('as-app-token type test (should return HTTP 200 OK)', function(done) {
 
@@ -231,3 +230,149 @@ describe('svcAuth API (express route handler) test', function() {
 
 });
 
+
+describe('getToken API test', function() {
+  var as_server;
+
+  before(function () {
+    as_server = require('./as-driver')(4000);
+    console.error('server open');
+  });
+
+  after(function () {
+    as_server.close();
+    console.error('server close');
+  });
+
+  it('Test - call Attestation Server and use the token to call SP (should return HTTP 200)', function(done) {
+    var getCertCallback = function (error, token) {
+
+      if (error) {
+        console.error('Error: failed to return certs from Attestation Service: ' +
+        JSON.stringify(error));
+        done(error);
+        return;
+      }
+
+      request = request('http://localhost:4000');
+      request.get('/v1/sp/auth-test')
+      .set('Accept', 'application/json')
+      .set('x-spartan-auth-token', token)
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end(function(err, res){
+        if (err) {
+          console.log(err);
+          return done(err);
+        }
+
+        //console.log(res.body);
+        return done();
+      });
+    };
+
+    spartan.getToken('SuperRole', {
+      app_privkey: privkey,
+      app_pubkey: pubkey,
+      as_url: 'http://localhost:4000/v1/as/tokens',
+      //token_type: 'app-svc-req'
+      //token_type: 'as-app-token'
+      cache_path: './'
+    }, getCertCallback);
+
+  });
+
+});
+
+describe('TokenFetcher APIs test', function() {
+  var as_server;
+
+  before(function () {
+    as_server = require('./as-driver')(4000);
+    console.error('server open');
+  });
+
+  after(function () {
+    as_server.close();
+    console.error('server close');
+  });
+
+  it('Test - call Attestation Server and use the token to call SP (should return HTTP 200)', function(done) {
+    var getCertCallback = function (error, token) {
+
+      if (error) {
+        console.error('Error: failed to return certs from Attestation Service: ' +
+        JSON.stringify(error));
+        done(error);
+        return;
+      }
+
+      var request2 = require('supertest');
+      request2 = request2('http://localhost:4000');
+      request2.get('/v1/sp/auth-test2')
+      .set('Accept', 'application/json')
+      .set('x-spartan-auth-token', token)
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end(function(err, res){
+        if (err) {
+          console.log(err);
+          return done(err);
+        }
+
+        //console.log(res.body);
+        return done();
+      });
+    };
+
+
+    var tok_fetcher = spartan.createTokenFetcher({
+      app_privkey: privkey,
+      app_pubkey: pubkey,
+      as_url: 'http://localhost:4000/v1/as/tokens',
+      cache_path: './'
+    });
+
+    tok_fetcher.getToken('SuperRole', getCertCallback);
+  });
+
+  it('Test2 - call Attestation Server and use the token to call SP (should return HTTP 200)', function(done) {
+    var getCertCallback = function (error, token) {
+
+      if (error) {
+        console.error('Error: failed to return certs from Attestation Service: ' +
+        JSON.stringify(error));
+        return done(error);
+      }
+
+      var request2 = require('supertest');
+      request2 = request2('http://localhost:4000');
+      request2.get('/v1/sp/auth-test')
+      .set('Accept', 'application/json')
+      .set('x-spartan-auth-token', token)
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end(function(err, res){
+        if (err) {
+          console.log(err);
+          return done(err);
+        }
+
+        //console.log(res.body);
+        return done();
+      });
+    };
+
+
+    var tok_fetcher = spartan.createTokenFetcher({
+      app_privkey: privkey,
+      app_pubkey: pubkey,
+      as_url: 'http://localhost:4000/v1/as/tokens',
+      cache_path: './'
+    });
+
+    tok_fetcher.getSignedToken('SuperRole', getCertCallback);
+
+  });
+
+});
