@@ -38,8 +38,8 @@ module.exports = function(grunt) {
         options: {
           coverage:true, // this will make the grunt.event.on('coverage') event listener to be triggered
           check: {
-            lines: 75,
-            statements: 75
+            lines: 50,
+            statements: 50
           },
           root: './', // define where the cover task should consider the root of libraries that are covered by tests
           reportFormats: ['cobertura','lcovonly']
