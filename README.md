@@ -4,6 +4,7 @@ This module provides authentication and authorization APIs for client & server a
 
 [![npm version][npm-badge]][npm]
 [![dependency status][dep-badge]][dep-status]
+[![Coverage Status](https://coveralls.io/repos/yahoo/spartan-node/badge.svg?branch=master&service=github)](https://coveralls.io/github/yahoo/spartan-node?branch=master)
 [![Build Status](https://travis-ci.org/yahoo/spartan-node.svg?branch=master)](https://travis-ci.org/yahoo/spartan-node)
 
 [npm]: https://www.npmjs.org/package/spartan-api
