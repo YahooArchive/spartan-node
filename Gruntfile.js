@@ -74,6 +74,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('coveralls', ['mocha_istanbul:coveralls']);
   grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
-  grunt.registerTask('test', ['jshint', 'mochaTest']);
+  grunt.registerTask('test', ['jshint', 'mochaTest', 'coverage', 'coveralls']);
   grunt.registerTask('default', ['test', 'coverage']);
 };
