@@ -8,6 +8,7 @@ var pubkey = fs.readFileSync(__dirname + '/test-ES256-app-pubkey.pem', 'utf8');
 var assert = require('assert');
 var express = require('express');
 var request = require('supertest');
+var token_path = '/tmp';
 
 describe("TokenSign and TokenVerify API Unit tests", function() {
     it("testTokenSignVerify", function(done) {
@@ -242,6 +243,7 @@ describe('getToken API test', function() {
   after(function () {
     as_server.close();
     console.error('server close');
+    fs.unlink(token_path + '/tokens', function (err, ret) {});
   });
 
   it('Test - call Attestation Server and use the token to call SP (should return HTTP 200)', function(done) {
@@ -277,7 +279,7 @@ describe('getToken API test', function() {
       as_url: 'http://localhost:4000/v1/as/tokens',
       //token_type: 'app-svc-req'
       //token_type: 'as-app-token'
-      cache_path: './'
+      cache_path: token_path
     }, getCertCallback);
 
   });
@@ -295,6 +297,7 @@ describe('TokenFetcher APIs test', function() {
   after(function () {
     as_server.close();
     console.error('server close');
+    fs.unlink(token_path + '/tokens', function (err, ret) {});
   });
 
   it('Test - call Attestation Server and use the token to call SP (should return HTTP 200)', function(done) {
@@ -330,7 +333,7 @@ describe('TokenFetcher APIs test', function() {
       app_privkey: privkey,
       app_pubkey: pubkey,
       as_url: 'http://localhost:4000/v1/as/tokens',
-      cache_path: './'
+      cache_path: token_path
     });
 
     tok_fetcher.getToken('SuperRole', getCertCallback);
@@ -368,7 +371,7 @@ describe('TokenFetcher APIs test', function() {
       app_privkey: privkey,
       app_pubkey: pubkey,
       as_url: 'http://localhost:4000/v1/as/tokens',
-      cache_path: './'
+      cache_path: token_path
     });
 
     tok_fetcher.getSignedToken('SuperRole', getCertCallback);

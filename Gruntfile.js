@@ -59,10 +59,14 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.event.on('coverage', function(lcovFileContents, done){
-    //console.log(lcov);
+  grunt.event.on('coverage', function(lcov, done){
     // Check below on the section "The coverage event"
-    done();
+    require('coveralls').handleInput(lcov, function(err){
+        if (err) {
+            return done(err);
+        }
+        done();
+    });
   });
  
  
@@ -74,6 +78,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('coveralls', ['mocha_istanbul:coveralls']);
   grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
-  grunt.registerTask('test', ['jshint', 'mochaTest', 'coverage', 'coveralls']);
+  grunt.registerTask('test', ['jshint', 'coveralls']);
   grunt.registerTask('default', ['test', 'coverage']);
 };
